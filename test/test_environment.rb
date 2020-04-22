@@ -1,0 +1,15 @@
+# Configure Rails Environment
+ENV["RAILS_ENV"] = "test"
+
+require 'secure_web_token'
+require 'helpers/boolean'
+require 'helpers/fake_rails'
+
+require 'active_support'
+require 'active_support/test_case'
+
+# Filter out Minitest backtrace while allowing backtrace from other libraries
+# to be shown.
+Minitest.backtrace_filter = Minitest::BacktraceFilter.new
+
+require 'minitest/autorun'
