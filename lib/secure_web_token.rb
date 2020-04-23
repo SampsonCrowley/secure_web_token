@@ -54,7 +54,7 @@ class SecureWebToken
       end
     end
 
-    def default_signing_key=(proc_or_value)
+    def default_signing_key=(value_or_callable)
       @default_sig_key = value_or_callable
     end
 

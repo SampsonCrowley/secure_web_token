@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+if [ -f ./secure_web_token.gemspec ]; then
+  # tar -C ./ -zxvf versions.tar.gz
+  rm -rf secure_web_token-*.gem
+  gem build secure_web_token.gemspec
+  gem push secure_web_token-*.gem
+fi

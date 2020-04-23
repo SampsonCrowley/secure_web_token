@@ -1,5 +1,12 @@
-#!/usr/bin/env ruby
-$: << File.expand_path("../test", __dir__)
+#!/usr/bin/env bash
 
-require "bundler/setup"
-require "rails/plugin/test"
+if [[ -z "$1" ]] ; then
+  bundle exec rake test
+else
+  for filename in $(find test/* -wholename */$1_test.rb); do
+    if ! bundle exec rake test "$filename"; then
+      exit 1
+    fi
+  done
+fi
+exit 0

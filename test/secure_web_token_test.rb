@@ -8,7 +8,7 @@ class SecureWebTokenTest < ActiveSupport::TestCase
     SecureWebToken.signing_key = nil
     SecureWebToken.encryption_key = nil
     SecureWebToken.encrypt_options = nil
-    @unique_tries = (ENV['FULL'] == "") ? 100000 : 100
+    @unique_tries = Boolean.parse(ENV['QUICK']) ? 100 : 100000
   end
 
   def with_rails
@@ -117,7 +117,7 @@ class SecureWebTokenTest < ActiveSupport::TestCase
 
     assert_equal rand_message, err.message
 
-    called_key = SecureWebToken.gen_signing_key
+    called_key = SecureWebToken.gen_encryption_key
     present_callable = ->() { called_key }
     SecureWebToken.default_encryption_key = present_callable
 
@@ -175,18 +175,81 @@ class SecureWebTokenTest < ActiveSupport::TestCase
     end
   end
 
-  test ".default_signing_key gets a value from credentials if available" do
-    Rails.application.credentials.stub(:dig, "tmp_value") do
-      assert_equal "tmp_value", SecureWebToken.default_signing_key
-    end
+  test ".default_signing_key= sets @default_sig_key" do
+    generated_key = SecureWebToken.gen_signing_key
+    refute_equal generated_key, SecureWebToken.instance_variable_get(:@default_sig_key)
+
+    SecureWebToken.default_signing_key = generated_key
+    assert_equal generated_key, SecureWebToken.instance_variable_get(:@default_sig_key)
   end
 
-  test ".default_signing_key generates a new key if credentials empty" do
-    SecureWebToken.stub(:gen_signing_key, "tmp_value") do
-      Rails.application.credentials.stub(:dig, nil) do
-        assert_equal "tmp_value", SecureWebToken.default_signing_key
+  test ".default_signing_key generates a new key if @default_sig_key is empty" do
+    generated_key = SecureWebToken.gen_signing_key
+    SecureWebToken.default_signing_key = nil
+
+    SecureWebToken.stub(:gen_signing_key, generated_key) do
+      assert_equal generated_key, SecureWebToken.default_signing_key
+    end
+
+    refute_equal \
+      SecureWebToken.default_signing_key,
+      SecureWebToken.default_signing_key
+  end
+
+  test ".default_signing_key returns @default_sig_key if not empty" do
+    generated_key = SecureWebToken.gen_signing_key
+    SecureWebToken.default_signing_key = generated_key
+
+    SecureWebToken.stub(:gen_signing_key, ->() { raise ".gen_signing_key was called" }) do
+      assert_equal generated_key, SecureWebToken.default_signing_key
+    end
+
+    assert_equal \
+      SecureWebToken.default_signing_key,
+      SecureWebToken.default_signing_key
+  end
+
+  test ".default_signing_key runs 'call' if @default_sig_key is callable" do
+    rand_message = "was called #{rand}"
+
+    breaking_callable = ->() { raise TestCallError.new(rand_message) }
+    SecureWebToken.default_signing_key = breaking_callable
+
+    err = assert_raises(TestCallError) do
+      SecureWebToken.default_signing_key
+    end
+
+    assert_equal rand_message, err.message
+
+    called_key = SecureWebToken.gen_signing_key
+    present_callable = ->() { called_key }
+    SecureWebToken.default_signing_key = present_callable
+
+    assert_equal called_key, SecureWebToken.default_signing_key
+  ensure
+    SecureWebToken.default_signing_key = nil
+  end
+
+  test ".default_signing_key generates a new key if @default_sig_key.call is empty" do
+    rand_message = "was called #{rand}"
+    [
+      nil,
+      "",
+      []
+    ].each do |blank_val|
+      callable = ->() { blank_val }
+      SecureWebToken.default_signing_key = callable
+      refute_equal blank_val, SecureWebToken.default_signing_key
+      assert_instance_of String, SecureWebToken.default_signing_key
+      SecureWebToken.stub(:gen_signing_key, ->() { raise TestCallError.new(rand_message) }) do
+        err = assert_raises(TestCallError) do
+          SecureWebToken.default_signing_key
+        end
+        assert_equal rand_message, err.message
       end
     end
+  ensure
+    SecureWebToken.default_signing_key = nil
   end
 
   [
