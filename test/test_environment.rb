@@ -2,12 +2,10 @@
 ENV["RAILS_ENV"] = "test"
 
 require 'secure_web_token'
-require 'helpers/boolean'
-require 'helpers/fake_rails'
 
+require 'coerce_boolean'
 require 'active_support'
 require 'active_support/test_case'
-
 require 'minitest/reporters'
 
 Minitest::Reporters.use! [Minitest::Reporters::DefaultReporter.new(:color => true)]

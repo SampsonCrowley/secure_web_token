@@ -4,7 +4,6 @@ PATH
     secure_web_token (0.1.0)
       jwe (~> 0.4)
       jwt (~> 2.2)
-      zeitwerk (~> 2.3)
 
 GEM
   remote: https://rubygems.org/
@@ -17,6 +16,7 @@ GEM
       zeitwerk (~> 2.2)
     ansi (1.5.0)
     builder (3.2.4)
+    coerce_boolean (0.1.0)
     concurrent-ruby (1.1.6)
     i18n (1.8.2)
       concurrent-ruby (~> 1.0)
@@ -40,8 +40,9 @@ PLATFORMS
 
 DEPENDENCIES
   activesupport (~> 6.0)
+  coerce_boolean (~> 0.1)
   minitest (~> 5.1)
-  minitest-reporters
+  minitest-reporters (~> 1.4)
   rake (~> 13.0)
   secure_web_token!
 

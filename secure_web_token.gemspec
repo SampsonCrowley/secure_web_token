@@ -16,11 +16,11 @@ Gem::Specification.new do |s|
 
   s.files = Dir["lib/**/*", "MIT-LICENSE", "README.md"]
 
-  s.add_dependency "zeitwerk", "~> 2.3"
   s.add_dependency "jwt", "~> 2.2"
   s.add_dependency "jwe", "~> 0.4"
 
   s.add_development_dependency "activesupport", "~> 6.0"
+  s.add_development_dependency "coerce_boolean", "~> 0.1"
   s.add_development_dependency "minitest", "~> 5.1"
   s.add_development_dependency 'minitest-reporters', "~> 1.4"
   s.add_development_dependency "rake", "~> 13.0"

@@ -8,7 +8,7 @@ class SecureWebTokenTest < ActiveSupport::TestCase
     SecureWebToken.signing_key = nil
     SecureWebToken.encryption_key = nil
     SecureWebToken.encrypt_options = nil
-    @unique_tries = Boolean.parse(ENV['QUICK']) ? 100 : 100000
+    @unique_tries = CoerceBoolean.from(ENV['QUICK']) ? 100 : 100000
   end
 
   def with_rails
