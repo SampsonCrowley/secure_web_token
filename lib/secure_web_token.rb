@@ -114,7 +114,7 @@ class SecureWebToken
       end
 
       def is_present?(object)
-        object.respond_to?(:present?) ? object.present? : !blank?(object)
+        object.respond_to?(:present?) ? object.present? : !is_blank?(object)
       end
 
       def get_presence(object)
