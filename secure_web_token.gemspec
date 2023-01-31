@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.add_dependency "jwt", "~> 2.2"
   s.add_dependency "jwe", "~> 0.4"
 
-  s.add_development_dependency "activesupport", "~> 6.0"
+  s.add_development_dependency "activesupport", "~> 7.0"
   s.add_development_dependency "coerce_boolean", "~> 0.1"
   s.add_development_dependency "minitest", "~> 5.1"
   s.add_development_dependency 'minitest-reporters', "~> 1.4"
